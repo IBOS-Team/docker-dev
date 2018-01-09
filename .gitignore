@@ -1,0 +1,10 @@
+nbproject/
+.gitginore
+.DS_Store
+.settings/
+.buildpath
+.project
+.idea/
+.idea/*
+nginx/conf.d/
+docker-compose-dev.yml
