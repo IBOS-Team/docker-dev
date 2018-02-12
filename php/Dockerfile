@@ -16,7 +16,7 @@ ENV PHPIZE_DEPS \
 # 备份原来的repo，切换使用国内阿里云的镜像。
 RUN cp /etc/apk/repositories /etc/apk/repositories.bak && echo "http://mirrors.aliyun.com/alpine/v3.7/main/" > /etc/apk/repositories
 
-# 添加phpearth的repo用来添加一些常用但比较难装的php扩展。如swoole、redis、imagick等。详见https://php.earth/docs/linux/alpine
+# 添加phpearth的repo用来添加一些常用但比较难装的php扩展。如redis、imagick等。详见https://php.earth/docs/linux/alpine
 RUN apk add --no-cache wget ca-certificates \
 && wget -O /etc/apk/keys/phpearth.rsa.pub https://repos.php.earth/alpine/phpearth.rsa.pub \
 && echo "https://repos.php.earth/alpine/v3.7" >> /etc/apk/repositories
@@ -51,7 +51,8 @@ RUN apk add --no-cache --virtual .build-deps \
 # 需要保留的包。
 RUN apk add --no-cache --virtual .fetch-deps \
         bash \
-        tzdata
+        tzdata \
+        linux-headers
 
 # 确保 www-data 用户存在
 RUN set -x \
@@ -68,7 +69,7 @@ ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 # 下载并验证php源码包。
-ENV PHP_URL="https://oss.ibos.cn/docker/resource/php/php-7.2.0.tar.xz"
+ENV PHP_URL="https://oss.ibos.cn/docker/resource/php/php-7.2.2.tar.xz"
 
 RUN set -xe; \
     mkdir -p /ibos/log/php-fpm; \
@@ -171,10 +172,7 @@ RUN set -ex \
     fi
 
 # 安装其他额外的扩展包。
-RUN apk add --no-cache php7.2-swoole php7.2-redis php7.2-memcached php7.2-imagick php7.2-xdebug
-
-# 清理安装环境
-RUN apk del .build-deps && rm -rf /tmp/pear ~/.pearrc
+RUN apk add --no-cache php7.2-redis php7.2-memcached php7.2-imagick php7.2-xdebug
 
 # 安装 tzdata 包,解决TimeZone问题
 ENV TIME_ZONE Asia/Shanghai
