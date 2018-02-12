@@ -2,14 +2,14 @@ version: '2'
 services:
   php:
     restart: always
-    image: registry.cn-hangzhou.aliyuncs.com/qyyteam/php-dev:1.0.0
+    image: php-7.2.2
     ports:
     - "9000:9000"
     - "9501:9501"
     volumes:
-    - /d/persistent/log/php-fpm:/ibos/log/php-fpm
-    - /d/persistent/log/xdebug:/ibos/log/xdebug
-    - /d/WWW:/ibos/www
+    - /e/persistent/log/php-fpm:/ibos/log/php-fpm
+    - /e/persistent/log/xdebug:/ibos/log/xdebug
+    - /e/Applications:/ibos/www
     - ./php/php.ini:/usr/local/etc/php/php.ini
     - ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf
     container_name: php-fpm
@@ -19,20 +19,23 @@ services:
       - redis
       - memcached
       - mysql
+    command: php-fpm
+    extra_hosts: 
+      - "wqdapi.cc:192.168.1.9"
   redis:
     restart: always
-    build: redis
+    image: registry.cn-hangzhou.aliyuncs.com/qyyteam/redis:1.0.0
     ports:
       - "6379:6379"
     volumes:
-      - /d/persistent/redis:/data
+      - /e/persistent/redis:/data
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - new 
     container_name: redis
   memcached:
     restart: always
-    build: memcached
+    image: memcached
     ports:
       - "11211:11211"
     networks:
@@ -46,7 +49,7 @@ services:
     volumes:
       - ./mysql/my.cnf:/etc/mysql/my.cnf
       - ./mysql/conf.d:/etc/mysql/conf.d
-      - /d/server/MySql/data:/var/lib/mysql
+      - /e/phpStudy/MySql/data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=root
@@ -60,8 +63,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - /d/WWW:/ibos/www
-      - /d/persistent/log/nginx:/ibos/log/nginx
+      - /e/Applications:/ibos/www
+      - /e/persistent/log/nginx:/ibos/log/nginx
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/conf.d:/etc/nginx/conf.d
     container_name: nginx
