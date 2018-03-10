@@ -2,7 +2,7 @@ version: '2'
 services:
   php:
     restart: always
-    image: registry.cn-hangzhou.aliyuncs.com/qyyteam/php-dev:1.0.0
+    image: ccr.ccs.tencentyun.com/game-base/php-7.2.2:product
     ports:
     - "9000:9000"
     - "9501:9501"
@@ -19,6 +19,9 @@ services:
       - redis
       - memcached
       - mysql
+    extra_hosts:
+      - "wqdapi.cc:192.168.1.9"
+    command: php-fpm
   redis:
     restart: always
     build: redis
